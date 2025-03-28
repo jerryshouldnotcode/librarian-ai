@@ -1,0 +1,15 @@
+03.19
+
+creating Librarian AI - an AI Google Extension for academic paper study
+
+Features
+- pdf annotation (highlight text, make in-notes citations, stored everytime it is reloaded) {locally stored}
+- sidebar ai chat to talk with the document while reading
+- preemptive loading when a pdf is open (probably by preloading the website in 
+  the background if some keyword is matched)
+- google docs API integration (to export chats, in-text notes)
+
+Model 
+- option to preload ai models (OpenAI, Claude, Perplexity) {just like Cursor}
+- cheaper if people use their own API keys 
+
