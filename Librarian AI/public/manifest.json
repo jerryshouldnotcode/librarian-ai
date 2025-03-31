@@ -15,7 +15,7 @@
     "content_scripts": [
       { 
         "type": "module",
-        "matches": ["*://*/*.pdf", "file:///"],
+        "matches": ["<all_urls>"],
         "js": ["pdf.worker.mjs", "highlighter.js", "content.js"]
       }
     ]
