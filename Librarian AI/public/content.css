@@ -15,3 +15,10 @@
     height: 100%;
     pointer-events: none; /* Allow clicks to pass through */
 }
+
+.highlight {
+    background-color: yellow;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 1000;
+}

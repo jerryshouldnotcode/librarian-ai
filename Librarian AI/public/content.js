@@ -1,5 +1,4 @@
 import { PDFJS } from 'pdfjs-dist/build/pdf';
-import { createHighlight } from './highlighter';
 import pdfWorker from 'pdfjs-dist/build/pdf.worker.mjs';
 
 // Set the worker source
@@ -13,6 +12,9 @@ function isPDFpage() {
     return url.endsWith('.pdf') ||
         document.contentType === 'application/pdf';
 }
+
+// Global variable for highlight layer
+let highlightLayer;
 
 /* Main logic: instead of having the PDF file re-render highlights
 every time a change is made to the PDF file (e.g., zooming in and out),
@@ -41,7 +43,7 @@ if (isPDFpage() === true){
     pdfViewer.className = 'pdf-viewer';
 
     // container for highlights
-    const highlightLayer = document.createElement('div');
+    highlightLayer = document.createElement('div');
     highlightLayer.className = 'highlight-layer';
 
     // append the highlight layer and viewer to the main container
@@ -77,10 +79,36 @@ if (isPDFpage() === true){
     document.addEventListener('mouseup', () => {
         const selection = window.getSelection();
         if (selection.toString().length > 0) {
-            // Call a function from highlighter.js to create a highlight
+            // Call the highlight function directly
             createHighlight(selection);
         }
     });
+}
+
+// Function to create a highlight (moved from highlighter.js)
+function createHighlight(selection) {
+    if (!highlightLayer) return;
+    
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    const highlight = document.createElement('div');
+    highlight.className = 'highlight';
+    highlight.style.position = 'absolute';
+    highlight.style.left = `${rect.left}px`;
+    highlight.style.top = `${rect.top}px`;
+    highlight.style.width = `${rect.width}px`;
+    highlight.style.height = `${rect.height}px`;
+    highlight.style.backgroundColor = 'yellow';
+    highlight.style.opacity = '0.3';
+    highlight.style.pointerEvents = 'none';
+    highlight.style.zIndex = '1000';
+    
+    highlightLayer.appendChild(highlight);
+
+    // Clear the selection
+    selection.removeAllRanges();
+    
+    console.log('Highlight created!', rect);
 }
     
 

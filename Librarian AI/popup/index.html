@@ -4,9 +4,46 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Librarian AI Popup</title>
+    <style>
+      body {
+        width: 300px;
+        height: 400px;
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .popup-container {
+        text-align: center;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      p {
+        color: #666;
+        margin-bottom: 20px;
+      }
+      .highlight-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      .highlight-button:hover {
+        background-color: #0056b3;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    
+    <div class="popup-container">
+      <h1>Librarian AI</h1>
+      <p>Your AI-powered reading assistant</p>
+      <button class="highlight-button" id="highlightBtn">Highlight Text</button>
+      <button class="highlight-button" id="clearBtn">Clear Highlights</button>
+    </div>
+    <script src="popup.js"></script>
   </body>
-</html> 
+</html>
