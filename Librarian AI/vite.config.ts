@@ -5,7 +5,7 @@ import { resolve } from 'path'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: 'public',
+    outDir: 'dist',
     rollupOptions: {
       input: {
         popup: resolve(__dirname, 'popup/index.html')
