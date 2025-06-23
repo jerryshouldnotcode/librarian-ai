@@ -8,12 +8,12 @@ export default defineConfig({
     outDir: 'dist',
     rollupOptions: {
       input: {
-        popup: resolve(__dirname, 'popup/index.html')
+        popup: resolve(__dirname, 'src/popup/index.html'),
       },
       output: {
+        format: 'iife', 
         entryFileNames: '[name].js',
-        chunkFileNames: '[name].js',
-        assetFileNames: '[name].[ext]'
+        chunkFileNames: '[name].js'
       }
     }
   }

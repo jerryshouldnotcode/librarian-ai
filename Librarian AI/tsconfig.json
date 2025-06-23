@@ -1,5 +1,12 @@
 {
   "files": [],
+  "compilerOptions": {
+    "types": ["chrome"],
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "lib": ["DOM", "ES2020"]
+  },
+  "include": ["src", "src/popup"], 
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }

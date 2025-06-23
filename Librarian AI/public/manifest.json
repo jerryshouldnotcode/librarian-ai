@@ -16,7 +16,7 @@
       { 
         "type": "module",
         "matches": ["<all_urls>"],
-        "js": ["pdf.worker.mjs", "content.js"]
+        "js": ["pdf.worker.mjs","content.mjs"]
       }
     ]
   }
