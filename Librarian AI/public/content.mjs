@@ -1,5 +1,6 @@
 import { GlobalWorkerOptions, getDocument } from 'pdfjs-dist';
 GlobalWorkerOptions.workerSrc = chrome.runtime.getURL('pdf.worker.mjs');
+GlobalWorkerOptions.workerPort = new Worker(GlobalWorkerOptions.workerSrc, { type: 'module' });
 
 // detecting if file is a pdf
 function isPDFpage() {
