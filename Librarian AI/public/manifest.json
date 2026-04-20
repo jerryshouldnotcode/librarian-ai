@@ -13,10 +13,9 @@
     },
     
     "content_scripts": [
-      { 
-        "type": "module",
+      {
         "matches": ["<all_urls>"],
-        "js": ["pdf.worker.mjs","content.mjs"]
+        "js": ["content-loader.js"]
       }
     ]
   }
