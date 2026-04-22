@@ -1,0 +1,77 @@
+<!DOCTYPE html>    <!-- this is the viewer page that is used to display the pdf -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Librarian AI — PDF viewer</title>
+    <style>
+      :root {
+        font-family: system-ui, sans-serif;
+        line-height: 1.5;
+        color: #1a1a1a;
+        background: #f5f5f5;
+      }
+      body {
+        margin: 0;
+        padding: 1.25rem 1.5rem;
+        max-width: 48rem;
+      }
+      h1 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem;
+      }
+      p {
+        margin: 0 0 0.75rem;
+      }
+      .url {
+        word-break: break-all;
+        font-size: 0.875rem;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+      }
+      .muted {
+        color: #555;
+        font-size: 0.875rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Librarian AI</h1>
+    <p class="muted">Viewer shell — PDF.js wiring comes in the next milestone.</p>
+    <p id="status"></p>
+    <p id="url" class="url" hidden></p>
+    <script>
+      (function () {
+        var raw = location.hash.length > 1 ? location.hash.slice(1) : '';
+        var statusEl = document.getElementById('status');
+        var urlEl = document.getElementById('url');
+
+        if (!raw) {
+          statusEl.textContent = 'No document URL. Open a link to an http(s) .pdf file.';
+          return;
+        }
+
+        var pdfUrl;
+        try {
+          pdfUrl = decodeURIComponent(raw);  /*decode the encoded url to get the pdf url*/
+        } catch (e) {
+          statusEl.textContent = 'Could not decode document URL from the address.';
+          return;
+        }
+
+        statusEl.textContent = 'Document URL:';
+        urlEl.hidden = false;
+        urlEl.textContent = pdfUrl;
+
+        try {
+          history.replaceState(null, '', location.pathname + location.search);  /*replace the current state with the new state*/
+        } catch (e) {
+          /* ignore */
+        }
+      })();
+    </script>
+  </body>
+</html>
