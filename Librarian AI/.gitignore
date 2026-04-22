@@ -11,6 +11,11 @@ node_modules
 dist
 dist-ssr
 *.local
+SPEC.md
+idea.txt    
+log.txt
+public/pdfjs/
+
 
 # Editor directories and files
 .vscode/*

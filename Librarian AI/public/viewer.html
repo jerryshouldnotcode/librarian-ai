@@ -1,77 +1,115 @@
-<!DOCTYPE html>    <!-- this is the viewer page that is used to display the pdf -->
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Librarian AI — PDF viewer</title>
+    <title>Librarian AI - PDF viewer</title>
+    <link rel="stylesheet" href="./pdfjs/web/pdf_viewer.css" />
     <style>
       :root {
         font-family: system-ui, sans-serif;
         line-height: 1.5;
-        color: #1a1a1a;
-        background: #f5f5f5;
+        color: #102033;
+        background: #d6dde8;
       }
+      * {
+        box-sizing: border-box;
+      }
+      html,
       body {
         margin: 0;
-        padding: 1.25rem 1.5rem;
-        max-width: 48rem;
+        height: 100%;
+        min-height: 100vh;
       }
-      h1 {
-        font-size: 1.125rem;
-        font-weight: 600;
-        margin: 0 0 0.5rem;
+      body {
+        position: relative;
+        overflow: hidden;
       }
-      p {
-        margin: 0 0 0.75rem;
-      }
-      .url {
-        word-break: break-all;
-        font-size: 0.875rem;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 6px;
+      #chrome {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
         padding: 0.75rem 1rem;
+        background: linear-gradient(135deg, #102033, #1b3550);
+        color: #f5f7fa;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        position: relative;
+        z-index: 2;
       }
-      .muted {
-        color: #555;
-        font-size: 0.875rem;
+      #title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+      #status {
+        font-size: 0.8rem;
+        color: #c5d2e3;
+      }
+      #url {
+        max-width: 42rem;
+        word-break: break-all;
+        font-size: 0.78rem;
+        color: #9fb2c9;
+      }
+      #viewerContainer {
+        overflow: auto;
+        position: absolute;
+        inset: var(--chrome-height, 4.25rem) 0 0 0;
+        padding: 1.5rem 0;
+        background:
+          radial-gradient(circle at top, rgba(255, 255, 255, 0.45), transparent 30%),
+          linear-gradient(180deg, #dce4ef 0%, #c8d2df 100%);
+        z-index: 1;
+      }
+      #viewer {
+        margin-inline: auto;
+      }
+      .librarianHighlightLayer {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 6;
+      }
+      .librarianHighlightRect {
+        position: absolute;
+        background: rgba(255, 224, 0, 0.35);
+        border-radius: 2px;
+        mix-blend-mode: multiply;
+      }
+      #message {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        max-width: 22rem;
+        padding: 0.75rem 0.9rem;
+        border-radius: 0.85rem;
+        background: rgba(16, 32, 51, 0.92);
+        color: #f5f7fa;
+        box-shadow: 0 0.75rem 2rem rgba(7, 16, 28, 0.24);
+        font-size: 0.85rem;
+        z-index: 20;
+      }
+      #message[data-tone="error"] {
+        background: rgba(102, 21, 21, 0.95);
+      }
+      #message[hidden] {
+        display: none;
       }
     </style>
   </head>
   <body>
-    <h1>Librarian AI</h1>
-    <p class="muted">Viewer shell — PDF.js wiring comes in the next milestone.</p>
-    <p id="status"></p>
-    <p id="url" class="url" hidden></p>
-    <script>
-      (function () {
-        var raw = location.hash.length > 1 ? location.hash.slice(1) : '';
-        var statusEl = document.getElementById('status');
-        var urlEl = document.getElementById('url');
-
-        if (!raw) {
-          statusEl.textContent = 'No document URL. Open a link to an http(s) .pdf file.';
-          return;
-        }
-
-        var pdfUrl;
-        try {
-          pdfUrl = decodeURIComponent(raw);  /*decode the encoded url to get the pdf url*/
-        } catch (e) {
-          statusEl.textContent = 'Could not decode document URL from the address.';
-          return;
-        }
-
-        statusEl.textContent = 'Document URL:';
-        urlEl.hidden = false;
-        urlEl.textContent = pdfUrl;
-
-        try {
-          history.replaceState(null, '', location.pathname + location.search);  /*replace the current state with the new state*/
-        } catch (e) {
-          /* ignore */
-        }
-      })();
-    </script>
+    <header id="chrome">
+      <div>
+        <div id="title">Librarian AI</div>
+        <div id="status">Initializing viewer</div>
+      </div>
+      <div id="url"></div>
+    </header>
+    <div id="viewerContainer" tabindex="0">
+      <div id="viewer" class="pdfViewer"></div>
+    </div>
+    <aside id="message" hidden></aside>
+    <script type="module" src="./viewer.mjs"></script>
   </body>
 </html>

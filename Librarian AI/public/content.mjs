@@ -48,7 +48,7 @@ function setupPdfAndHighlightOverlay() {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.type = 'text/css';
-    link.href = browser.runtime.getURL('content.css'); 
+    link.href = chrome.runtime.getURL('content.css'); 
     document.head.appendChild(link);
 
     // main container for the pdf and highlights

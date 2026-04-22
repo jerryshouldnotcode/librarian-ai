@@ -16,7 +16,7 @@ async function registerPdfRedirectRule() {
             },
           },
           condition: {
-            regexFilter: '^(https?://.+\\.pdf([?#].*)?|file://.*\\.pdf|https?://arxiv.org/pdf/.*)$',
+            regexFilter: '^((https?://.+\\.pdf([?].*)?)|(file://.*\\.pdf)|(https?://arxiv.org/pdf/.*))$',
             resourceTypes: [chrome.declarativeNetRequest.ResourceType.MAIN_FRAME],
           },
         },
