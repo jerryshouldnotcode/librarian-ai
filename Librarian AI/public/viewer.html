@@ -11,6 +11,7 @@
         line-height: 1.5;
         color: #102033;
         background: #d6dde8;
+        --sidebar-width: 22rem;
       }
       * {
         box-sizing: border-box;
@@ -37,6 +38,12 @@
         position: relative;
         z-index: 2;
       }
+      #chromeActions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        min-width: 0;
+      }
       #title {
         font-size: 0.95rem;
         font-weight: 600;
@@ -52,15 +59,54 @@
         font-size: 0.78rem;
         color: #9fb2c9;
       }
+      #sidebarToggle {
+        appearance: none;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.08);
+        color: #f5f7fa;
+        border-radius: 999px;
+        padding: 0.45rem 0.8rem;
+        font: inherit;
+        font-size: 0.78rem;
+        cursor: pointer;
+        transition:
+          background 120ms ease,
+          border-color 120ms ease,
+          transform 120ms ease;
+      }
+      #sidebarToggle:hover {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.28);
+      }
+      #sidebarToggle:active {
+        transform: translateY(1px);
+      }
       #viewerContainer {
         overflow: auto;
         position: absolute;
-        inset: var(--chrome-height, 4.25rem) 0 0 0;
+        inset: var(--chrome-height, 4.25rem) var(--sidebar-width, 22rem) 0 0;
         padding: 1.5rem 0;
         background:
           radial-gradient(circle at top, rgba(255, 255, 255, 0.45), transparent 30%),
           linear-gradient(180deg, #dce4ef 0%, #c8d2df 100%);
         z-index: 1;
+      }
+      #sidebar {
+        position: absolute;
+        top: var(--chrome-height, 4.25rem);
+        right: 0;
+        bottom: 0;
+        width: var(--sidebar-width, 22rem);
+        background:
+          linear-gradient(180deg, rgba(17, 32, 49, 0.98), rgba(21, 39, 61, 0.98)),
+          linear-gradient(180deg, #15273d, #0f1b2a);
+        border-left: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: -0.75rem 0 2rem rgba(8, 16, 28, 0.18);
+        z-index: 3;
+        overflow: hidden;
+      }
+      #sidebar[hidden] {
+        display: none;
       }
       #viewer {
         margin-inline: auto;
@@ -70,12 +116,16 @@
         inset: 0;
         pointer-events: none;
         z-index: 6;
+        contain: paint;
       }
       .librarianHighlightRect {
         position: absolute;
-        background: rgba(255, 224, 0, 0.35);
-        border-radius: 2px;
-        mix-blend-mode: multiply;
+        background: rgba(255, 230, 0, 0.26);
+        border-radius: 4px;
+        box-shadow:
+          0 0.55em 0 rgba(255, 230, 0, 0.14) inset,
+          0 0 0 0.5px rgba(255, 230, 0, 0.12);
+        transform: translateY(-0.25px);
       }
       #message {
         position: fixed;
@@ -104,12 +154,17 @@
         <div id="title">Librarian AI</div>
         <div id="status">Initializing viewer</div>
       </div>
-      <div id="url"></div>
+      <div id="chromeActions">
+        <div id="url"></div>
+        <button id="sidebarToggle" type="button">Hide sidebar</button>
+      </div>
     </header>
     <div id="viewerContainer" tabindex="0">
       <div id="viewer" class="pdfViewer"></div>
     </div>
+    <aside id="sidebar" aria-label="Librarian AI sidebar"></aside>
     <aside id="message" hidden></aside>
     <script type="module" src="./viewer.mjs"></script>
+    <script type="module" src="./sidebar.mjs"></script>
   </body>
 </html>
