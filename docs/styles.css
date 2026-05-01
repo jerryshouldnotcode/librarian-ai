@@ -1,13 +1,17 @@
 :root {
-  --bg: #0c0e12;
-  --bg-elevated: #141820;
-  --text: #e8eef6;
-  --muted: #8b96a8;
-  --accent: #6eb3ff;
-  --accent-dim: rgba(110, 179, 255, 0.35);
+  --bg: #10100e;
+  --bg-surface: #1a1a18;
+  --bg-surface-2: #23221f;
+  --text: #f4efe7;
+  --text-muted: #9a968c;
+  --text-dim: #6f6b63;
+  --accent: #c9a84c;
+  --accent-dim: rgba(201, 168, 76, 0.18);
   --border: rgba(255, 255, 255, 0.08);
-  --radius: 12px;
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
+  --border-strong: rgba(201, 168, 76, 0.34);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  --radius: 0.95rem;
+  --font-serif: "Georgia", "Times New Roman", serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
@@ -24,14 +28,26 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: var(--font-sans);
+  font-family: var(--font-serif);
   font-size: 1.05rem;
-  line-height: 1.55;
+  line-height: 1.62;
   color: var(--text);
-  background: var(--bg);
+  background:
+    radial-gradient(circle at top, rgba(255, 215, 128, 0.06), transparent 34%),
+    linear-gradient(180deg, #10100e 0%, #161613 100%);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
   background-image:
-    radial-gradient(ellipse 120% 80% at 50% -40%, rgba(110, 179, 255, 0.12), transparent),
-    radial-gradient(ellipse 60% 50% at 100% 0%, rgba(110, 179, 255, 0.06), transparent);
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.35;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85), transparent 88%);
 }
 
 a {
@@ -44,37 +60,44 @@ a:hover {
 }
 
 .wrap {
-  width: min(1040px, 100% - 2rem);
+  width: min(1060px, calc(100% - 2rem));
   margin-inline: auto;
 }
 
 header.site {
-  padding: 3.5rem 0 2.5rem;
+  position: relative;
+  padding: 4rem 0 2.75rem;
   border-bottom: 1px solid var(--border);
 }
 
-.eyebrow {
+.eyebrow,
+section h2,
+footer {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 0.75rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.95rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
 }
 
 h1 {
-  font-size: clamp(2rem, 5vw, 2.85rem);
-  font-weight: 650;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
   margin: 0 0 1rem;
+  font-size: clamp(2.5rem, 5.4vw, 4.5rem);
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+  font-weight: 500;
+  max-width: 8ch;
 }
 
 .lead {
-  font-size: 1.15rem;
-  color: var(--muted);
-  max-width: 38ch;
+  max-width: 44ch;
   margin: 0 0 1.75rem;
+  font-size: clamp(1.08rem, 1.35vw, 1.28rem);
+  color: var(--text-muted);
 }
 
 .actions {
@@ -88,38 +111,47 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.65rem 1.15rem;
-  border-radius: 10px;
-  font-weight: 600;
+  gap: 0.45rem;
+  min-height: 2.9rem;
+  padding: 0.72rem 1.05rem;
+  border-radius: 0.85rem;
+  font: inherit;
   font-size: 0.95rem;
   border: 1px solid transparent;
   cursor: pointer;
-  font-family: inherit;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition:
+    transform 140ms ease,
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  text-decoration: none;
 }
 
 .btn-primary {
   background: var(--accent);
-  color: #0a0c10;
+  color: #171411;
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(255, 248, 236, 0.08) inset;
 }
 
 .btn-primary:hover {
-  filter: brightness(1.05);
-  text-decoration: none;
+  background: #d8bb67;
+  border-color: #d8bb67;
 }
 
 .btn-ghost {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text);
   border-color: var(--border);
 }
 
 .btn-ghost:hover {
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.14);
-  text-decoration: none;
 }
 
 .btn[disabled],
@@ -130,16 +162,13 @@ h1 {
 }
 
 section {
-  padding: 2.75rem 0;
+  padding: 2.8rem 0;
 }
 
 section h2 {
-  font-size: 1.1rem;
-  font-family: var(--font-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin: 0 0 1.25rem;
+  margin: 0 0 1.15rem;
+  font-size: 0.76rem;
+  color: var(--text-muted);
 }
 
 .grid {
@@ -148,39 +177,45 @@ section h2 {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
-.card {
-  background: var(--bg-elevated);
+.card,
+.install {
+  position: relative;
+  background: rgba(255, 255, 255, 0.035);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.25rem 1.35rem;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.card {
+  padding: 1.2rem 1.25rem 1.15rem;
 }
 
 .card h3 {
   margin: 0 0 0.5rem;
-  font-size: 1.05rem;
+  font-size: 1.03rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .card p {
   margin: 0;
-  color: var(--muted);
-  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-size: 0.96rem;
 }
 
 .install {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.35rem 1.5rem;
+  padding: 1.2rem 1.25rem;
 }
 
 .install ol {
   margin: 0;
-  padding-left: 1.25rem;
-  color: var(--muted);
+  padding-left: 1.2rem;
+  color: var(--text-muted);
 }
 
 .install li + li {
-  margin-top: 0.5rem;
+  margin-top: 0.6rem;
 }
 
 .install code {
@@ -188,15 +223,16 @@ section h2 {
   font-size: 0.85em;
   color: var(--text);
   background: rgba(0, 0, 0, 0.35);
-  padding: 0.12em 0.35em;
-  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.12em 0.34em;
+  border-radius: 0.45rem;
 }
 
 footer {
   padding: 2rem 0 3rem;
   border-top: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 0.9rem;
+  color: var(--text-dim);
+  font-size: 0.84rem;
 }
 
 footer .wrap {
@@ -209,5 +245,36 @@ footer .wrap {
 
 footer nav {
   display: flex;
-  gap: 1.25rem;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+}
+
+footer a {
+  color: var(--text-muted);
+}
+
+footer a:hover {
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  body {
+    font-size: 1rem;
+  }
+
+  header.site {
+    padding-top: 3rem;
+  }
+
+  h1 {
+    max-width: 10ch;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  footer .wrap {
+    align-items: flex-start;
+  }
 }
