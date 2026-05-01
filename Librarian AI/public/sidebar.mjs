@@ -1400,12 +1400,14 @@ function injectStyles() {
       width: 14rem;
       border-radius: 1rem;
       padding: 0.85rem;
-      background: rgba(12, 20, 32, 0.98);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+      color: #141210;
+      background: rgba(252, 250, 246, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
       display: grid;
       gap: 0.8rem;
-      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
     }
 
     .sidebarHighlightMenuHeader {
@@ -1424,7 +1426,7 @@ function injectStyles() {
       font-size: 0.72rem;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      color: rgba(226, 236, 248, 0.66);
+      color: rgba(20, 18, 16, 0.55);
     }
 
     .sidebarHighlightMenuChoices {
@@ -1443,18 +1445,26 @@ function injectStyles() {
     }
 
     .sidebarHighlightMenuClose {
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
+      background: rgba(0, 0, 0, 0.06);
+      color: #141210;
       padding: 0.35rem 0.6rem;
       font-size: 0.78rem;
     }
 
+    .sidebarHighlightMenuClose:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
     .sidebarHighlightMenuDelete {
       width: 100%;
-      background: rgba(255, 99, 71, 0.18);
-      color: #fff;
+      background: rgba(200, 60, 45, 0.12);
+      color: #5a1008;
       padding: 0.55rem 0.75rem;
       text-align: center;
+    }
+
+    .sidebarHighlightMenuDelete:hover {
+      background: rgba(200, 60, 45, 0.18);
     }
 
     .sidebarHighlightText {
@@ -1552,9 +1562,28 @@ function injectStyles() {
     .sidebarSummaryStat,
     .sidebarStatusCard,
     .sidebarColorCard,
-    .sidebarHighlightItem,
-    .sidebarHighlightMenu {
+    .sidebarHighlightItem {
       background: rgba(255, 255, 255, 0.035);
+    }
+
+    .sidebarHighlightMenu {
+      background: rgba(252, 250, 246, 0.92);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      color: #141210;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebarHighlightMenuLabel {
+      color: rgba(20, 18, 16, 0.52);
+    }
+
+    .sidebarHighlightMenuClose {
+      background: rgba(0, 0, 0, 0.07);
+      color: #141210;
+    }
+
+    .sidebarHighlightMenuClose:hover {
+      background: rgba(0, 0, 0, 0.11);
     }
 
     .sidebarMessage.is-user {
@@ -1586,7 +1615,20 @@ function injectStyles() {
     }
 
     .sidebarHighlightMenuDelete {
-      background: rgba(199, 162, 74, 0.16);
+      background: rgba(200, 60, 45, 0.14);
+      color: #4a0e08;
+    }
+
+    .sidebarHighlightMenuDelete:hover {
+      background: rgba(200, 60, 45, 0.2);
+    }
+
+    .sidebarHighlightMenu .sidebarColorSwatch {
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14) inset;
+    }
+
+    .sidebarHighlightMenu .sidebarColorSwatch.is-active {
+      box-shadow: 0 0 0 2px #141210, 0 0 0 4px rgba(252, 250, 246, 0.98);
     }
   `;
   document.head.appendChild(style);
