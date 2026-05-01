@@ -16,6 +16,7 @@ idea.txt
 log.txt
 public/pdfjs/
 ISSUES.md
+*.md
 
 # Editor directories and files
 .vscode/*

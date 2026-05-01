@@ -30,10 +30,17 @@ const lifecycle = {
 
 const highlights = [];
 const highlightLayers = new Map();
+const HIGHLIGHT_COLOR_STORAGE_KEY = "librarian:highlightColor";
+const HIGHLIGHT_COLOR_STYLES = {
+  yellow: { background: "rgba(255, 230, 0, 0.28)" },
+  teal: { background: "rgba(80, 220, 210, 0.24)" },
+  coral: { background: "rgba(255, 170, 150, 0.26)" },
+};
 
 let activePdfUrl = null;
 let activeHighlightsKey = null;
 let saveHighlightsTimer = null;
+let activeHighlightColor = readStoredHighlightColor();
 
 window.librarianViewer = {
   lifecycle,
@@ -52,6 +59,9 @@ window.librarianViewer = {
   getHighlights() {
     return highlights.slice();
   },
+  getHighlightColor() {
+    return activeHighlightColor;
+  },
   deleteHighlight(id) {
     const index = highlights.findIndex((h) => h.id === id);
     if (index === -1) {
@@ -60,6 +70,7 @@ window.librarianViewer = {
     const [removed] = highlights.splice(index, 1);
     scheduleSaveHighlights();
     redrawHighlightsForPage(removed.pageNumber);
+    notifyHighlightsChanged();
     return true;
   },
   deleteGroup(groupId) {
@@ -77,6 +88,7 @@ window.librarianViewer = {
       for (const pageNumber of pages) {
         redrawHighlightsForPage(pageNumber);
       }
+      notifyHighlightsChanged();
     }
     return removedAny;
   },
@@ -90,6 +102,7 @@ window.librarianViewer = {
     for (const pageNumber of pages) {
       redrawHighlightsForPage(pageNumber);
     }
+    notifyHighlightsChanged();
   },
   scrollToHighlight(id) {
     const record = highlights.find((h) => h.id === id);
@@ -166,6 +179,8 @@ async function boot() {
 
   bindLifecycleEvents(eventBus);
   bindHighlighting();
+  bindHighlightResizeRedraw();
+  bindHighlightInteractions();
   bindSidebarEvents();
   linkService.setViewer(pdfViewer);
 
@@ -460,6 +475,14 @@ function bindLifecycleEvents(eventBus) {
 
     maybeResolvePageReady(event.pageNumber);
   });
+
+  eventBus.on("scalechanging", () => {
+    scheduleRedrawAllHighlightPages();
+  });
+
+  eventBus.on("rotationchanging", () => {
+    scheduleRedrawAllHighlightPages();
+  });
 }
 
 function bindHighlighting() {
@@ -507,6 +530,81 @@ function bindHighlighting() {
   });
 }
 
+let highlightRedrawTimer = null;
+
+function scheduleRedrawAllHighlightPages() {
+  if (highlightRedrawTimer != null) {
+    clearTimeout(highlightRedrawTimer);
+  }
+  highlightRedrawTimer = setTimeout(() => {
+    highlightRedrawTimer = null;
+    const pages = [...new Set(highlights.map((h) => h.pageNumber))];
+    for (const pageNumber of pages) {
+      redrawHighlightsForPage(pageNumber);
+    }
+  }, 100);
+}
+
+function bindHighlightResizeRedraw() {
+  window.addEventListener("resize", scheduleRedrawAllHighlightPages);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", scheduleRedrawAllHighlightPages);
+  }
+}
+
+function bindHighlightInteractions() {
+  const activateHighlightFromTarget = (target) => {
+    const button = target?.closest?.(".librarianHighlightHitTarget");
+    if (!(button instanceof HTMLElement)) {
+      return null;
+    }
+
+    const pageNumber = Number(button.dataset.pageNumber);
+    const highlightId = button.dataset.highlightId ?? "";
+    const groupId = button.dataset.groupId ?? "";
+    const color = button.dataset.color ?? "yellow";
+    if (!highlightId || !Number.isFinite(pageNumber)) {
+      return null;
+    }
+
+    return { pageNumber, highlightId, groupId, color };
+  };
+
+  viewerContainer.addEventListener("click", (event) => {
+    const target = activateHighlightFromTarget(event.target);
+    if (!target) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    document.dispatchEvent(
+      new CustomEvent("librarian:viewer:highlight-selected", {
+        detail: target,
+      }),
+    );
+  });
+
+  viewerContainer.addEventListener("contextmenu", (event) => {
+    const target = activateHighlightFromTarget(event.target);
+    if (!target) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    document.dispatchEvent(
+      new CustomEvent("librarian:viewer:highlight-contextmenu", {
+        detail: {
+          ...target,
+          clientX: event.clientX,
+          clientY: event.clientY,
+        },
+      }),
+    );
+  });
+}
+
 function bindSidebarEvents() {
   document.addEventListener("librarian:sidebar:focus-highlight", (event) => {
     const pageNumber = event?.detail?.pageNumber;
@@ -521,6 +619,57 @@ function bindSidebarEvents() {
 
     pageEl.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
     redrawHighlightsForPage(pageNumber);
+  });
+
+  document.addEventListener("librarian:sidebar:delete-highlight", (event) => {
+    const detail = event?.detail ?? {};
+    const highlightId = typeof detail.highlightId === "string" ? detail.highlightId : "";
+    const groupId = typeof detail.groupId === "string" ? detail.groupId : "";
+
+    if (groupId && window.librarianViewer.deleteGroup(groupId)) {
+      return;
+    }
+
+    if (highlightId) {
+      window.librarianViewer.deleteHighlight(highlightId);
+    }
+  });
+
+  document.addEventListener("librarian:sidebar:set-highlight-color", (event) => {
+    const nextColor = normalizeHighlightColor(event?.detail?.color);
+    if (!nextColor || nextColor === activeHighlightColor) {
+      return;
+    }
+
+    const highlightId = typeof event?.detail?.highlightId === "string" ? event.detail.highlightId : "";
+    const groupId = typeof event?.detail?.groupId === "string" ? event.detail.groupId : "";
+
+    activeHighlightColor = nextColor;
+    storeHighlightColor(nextColor);
+
+    const pages = new Set();
+    let changed = false;
+    if (highlightId || groupId) {
+      for (const highlight of highlights) {
+        const matchesGroup = groupId && highlight.groupId === groupId;
+        const matchesHighlight = highlightId && highlight.id === highlightId;
+        if (!matchesGroup && !matchesHighlight) {
+          continue;
+        }
+
+        highlight.color = nextColor;
+        pages.add(highlight.pageNumber);
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      scheduleSaveHighlights();
+      for (const pageNumber of pages) {
+        redrawHighlightsForPage(pageNumber);
+      }
+      notifyHighlightsChanged();
+    }
   });
 }
 
@@ -606,7 +755,7 @@ function captureHighlightsFromSelection() {
       prefix: anchored.prefix,
       suffix: anchored.suffix,
       createdAt: Date.now(),
-      color: "yellow",
+      color: activeHighlightColor,
     });
   }
 
@@ -630,15 +779,24 @@ function redrawHighlightsForPage(pageNumber) {
     return;
   }
 
-  const layer = getOrCreateHighlightLayer(textLayer, pageNumber);
-  layer.replaceChildren();
+  const layerEl = getOrCreateHighlightLayer(textLayer, pageNumber);
+  ensureHighlightLayerAboveTextSpans(textLayer, layerEl);
 
+  const visualsEl = document.createElement("div");
+  visualsEl.className = "librarianHighlightVisuals";
+  visualsEl.style.cssText = "position:absolute;inset:0;pointer-events:none;z-index:1";
+  layerEl.replaceChildren(visualsEl);
+
+  const anchor =
+    layerEl.offsetParent?.getBoundingClientRect() ?? textLayer.getBoundingClientRect();
   const index = buildPageTextIndex(pageEl);
   if (!index) {
     return;
   }
 
   const normalized = normalizeWithMaps(index.rawText);
+  const mergeOpts = { lineTolPx: 3, gapTolPx: 3 };
+  const hitPaintQueue = [];
 
   for (const highlight of highlights) {
     if (highlight.pageNumber !== pageNumber) {
@@ -650,8 +808,43 @@ function redrawHighlightsForPage(pageNumber) {
       continue;
     }
 
-    renderHighlightRange(textLayer, layer, range);
+    const mergedRects = mergeClientRects([...range.getClientRects()], mergeOpts);
+    if (!mergedRects.length) {
+      continue;
+    }
+
+    const color = normalizeHighlightColor(highlight.color);
+    const style = getHighlightStyle(color);
+    for (const rect of mergedRects) {
+      appendHighlightVisualRect(visualsEl, rect, anchor, style, color);
+    }
+    hitPaintQueue.push({ highlight, mergedRects });
   }
+
+  const hitLayer = ensureHighlightHitLayer(layerEl);
+  hitLayer.replaceChildren();
+  for (const { highlight, mergedRects } of hitPaintQueue) {
+    appendHighlightHitTargets(hitLayer, highlight, mergedRects, anchor);
+  }
+}
+
+function appendHighlightVisualRect(visualsEl, rectViewport, anchorViewport, style, color) {
+  const left = rectViewport.left - anchorViewport.left;
+  const top = rectViewport.top - anchorViewport.top;
+  const width = rectViewport.width;
+  const height = rectViewport.height;
+  if (width <= 0 || height <= 0) {
+    return;
+  }
+
+  const el = document.createElement("div");
+  el.className = `librarianHighlightRect is-${color}`;
+  el.style.left = `${left}px`;
+  el.style.top = `${top}px`;
+  el.style.width = `${width}px`;
+  el.style.height = `${height}px`;
+  el.style.background = style.background;
+  visualsEl.appendChild(el);
 }
 
 function resolveHighlightToRange(pageIndex, normalized, highlight) {
@@ -757,32 +950,89 @@ function scrollRangeIntoView(range) {
   viewerContainer.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
 }
 
-const DEBUG_MERGED_RECTS = false;
-
-function renderHighlightRange(textLayerEl, layerEl, range) {
-  const anchorRect =
-    layerEl.offsetParent?.getBoundingClientRect() ?? textLayerEl.getBoundingClientRect();
-  const mergedRects = mergeClientRects(range.getClientRects(), {
-    lineTolPx: 2,
-    gapTolPx: 2,
-  });
-
-  if (DEBUG_MERGED_RECTS) {
-    console.debug("[Librarian AI] merged highlight rects", {
-      rawCount: range.getClientRects().length,
-      mergedCount: mergedRects.length,
-    });
+function ensureHighlightHitLayer(layerEl) {
+  let hitLayer = layerEl.querySelector(".librarianHighlightHitLayer");
+  if (!hitLayer) {
+    hitLayer = document.createElement("div");
+    hitLayer.className = "librarianHighlightHitLayer";
+    hitLayer.setAttribute("aria-hidden", "true");
+    hitLayer.style.position = "absolute";
+    hitLayer.style.inset = "0";
+    hitLayer.style.pointerEvents = "none";
+    hitLayer.style.zIndex = "2";
+    layerEl.appendChild(hitLayer);
   }
+  return hitLayer;
+}
 
-  for (const rect of mergedRects) {
-    const el = document.createElement("div");
-    el.className = "librarianHighlightRect";
-    el.style.left = `${rect.left - anchorRect.left}px`;
-    el.style.top = `${rect.top - anchorRect.top}px`;
-    el.style.width = `${rect.width}px`;
-    el.style.height = `${rect.height}px`;
-    layerEl.appendChild(el);
+function appendHighlightHitTargets(hitLayer, highlight, rects, anchorViewport) {
+  const color = normalizeHighlightColor(highlight.color);
+
+  for (const rect of rects) {
+    const left = rect.left - anchorViewport.left;
+    const top = rect.top - anchorViewport.top;
+    const width = rect.width;
+    const height = rect.height;
+    if (width <= 0 || height <= 0) {
+      continue;
+    }
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `librarianHighlightHitTarget is-${color}`;
+    button.tabIndex = -1;
+    button.dataset.highlightId = highlight.id;
+    button.dataset.groupId = highlight.groupId ?? "";
+    button.dataset.pageNumber = String(highlight.pageNumber);
+    button.dataset.color = color;
+    button.setAttribute("aria-label", `Highlight: ${highlight.exact}`);
+    button.style.position = "absolute";
+    button.style.pointerEvents = "auto";
+    button.style.background = "transparent";
+    button.style.border = "0";
+    button.style.padding = "0";
+    button.style.margin = "0";
+    button.style.opacity = "0";
+    button.style.left = `${left}px`;
+    button.style.top = `${top}px`;
+    button.style.width = `${width}px`;
+    button.style.height = `${height}px`;
+    hitLayer.appendChild(button);
   }
+}
+
+function getHighlightStyle(color) {
+  const normalized = normalizeHighlightColor(color);
+  return HIGHLIGHT_COLOR_STYLES[normalized] ?? HIGHLIGHT_COLOR_STYLES.yellow;
+}
+
+function normalizeHighlightColor(color) {
+  return Object.prototype.hasOwnProperty.call(HIGHLIGHT_COLOR_STYLES, color) ? color : "yellow";
+}
+
+function readStoredHighlightColor() {
+  try {
+    const stored = sessionStorage.getItem(HIGHLIGHT_COLOR_STORAGE_KEY);
+    return normalizeHighlightColor(stored);
+  } catch {
+    return "yellow";
+  }
+}
+
+function storeHighlightColor(color) {
+  try {
+    sessionStorage.setItem(HIGHLIGHT_COLOR_STORAGE_KEY, normalizeHighlightColor(color));
+  } catch {
+    // ignore
+  }
+}
+
+function notifyHighlightsChanged() {
+  document.dispatchEvent(
+    new CustomEvent("librarian:highlightschanged", {
+      detail: { highlights: highlights.slice() },
+    }),
+  );
 }
 
 function mergeClientRects(rects, { lineTolPx = 2, gapTolPx = 2 } = {}) {
@@ -861,6 +1111,12 @@ function mergeClientRects(rects, { lineTolPx = 2, gapTolPx = 2 } = {}) {
   return mergedRects;
 }
 
+function ensureHighlightLayerAboveTextSpans(textLayerEl, layerEl) {
+  if (layerEl.parentElement === textLayerEl && textLayerEl.lastElementChild !== layerEl) {
+    textLayerEl.appendChild(layerEl);
+  }
+}
+
 function getOrCreateHighlightLayer(textLayerEl, pageNumber) {
   const existing = highlightLayers.get(pageNumber);
   if (existing && existing.isConnected) {
@@ -870,6 +1126,10 @@ function getOrCreateHighlightLayer(textLayerEl, pageNumber) {
   const layer = document.createElement("div");
   layer.className = "librarianHighlightLayer";
   layer.dataset.pageNumber = String(pageNumber);
+  layer.style.position = "absolute";
+  layer.style.inset = "0";
+  layer.style.zIndex = "2";
+  layer.style.pointerEvents = "none";
   textLayerEl.appendChild(layer);
   highlightLayers.set(pageNumber, layer);
   return layer;
