@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Librarian AI — a Chrome extension for highlighting, notes, and AI-assisted reading on PDFs in a dedicated viewer."
+    />
+    <title>Librarian AI</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./config.js"></script>
+  </head>
+  <body>
+    <header class="site">
+      <div class="wrap">
+        <p class="eyebrow">Chrome extension · work in progress</p>
+        <h1>Librarian AI</h1>
+        <p class="lead">
+          Read academic PDFs in an extension-controlled viewer: highlights, notes, and chat with context from your selection—without leaving the page.
+        </p>
+        <div class="actions">
+          <a id="link-github" class="btn btn-primary" href="#" rel="noopener noreferrer">View source</a>
+          <a id="link-store" class="btn btn-ghost is-disabled" href="#" rel="noopener noreferrer" aria-disabled="true">Chrome Web Store</a>
+          <a id="link-release" class="btn btn-ghost is-disabled" href="#" rel="noopener noreferrer" aria-disabled="true">Latest release</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section aria-labelledby="features-heading">
+        <div class="wrap">
+          <h2 id="features-heading">What it does</h2>
+          <div class="grid">
+            <article class="card">
+              <h3>Owned viewer</h3>
+              <p>PDFs open in a first-party PDF.js surface so highlights and the sidebar stay stable.</p>
+            </article>
+            <article class="card">
+              <h3>Highlights &amp; notes</h3>
+              <p>Capture quotes, jump back to the source, and attach notes per highlight.</p>
+            </article>
+            <article class="card">
+              <h3>AI chat</h3>
+              <p>Ask questions with thread context from what you selected; API key stays local in the extension.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="install-heading">
+        <div class="wrap">
+          <h2 id="install-heading">Install from source</h2>
+          <div class="install">
+            <ol>
+              <li>Clone the repo from <strong>View source</strong> above.</li>
+              <li>In Chrome, open <code>chrome://extensions</code> and enable <strong>Developer mode</strong>.</li>
+              <li>Click <strong>Load unpacked</strong> and choose the <code>Librarian AI</code> folder (the one that contains <code>manifest.json</code>).</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <span>Librarian AI — PDF is primary.</span>
+        <nav aria-label="Repository">
+          <a id="footer-github" href="#">GitHub</a>
+          <a id="link-design" href="#">Design doc</a>
+          <a id="link-spec" href="#">Spec</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        var cfg = window.LIBRARIAN_LANDING || {};
+        var repo = (cfg.githubRepo || "").replace(/\/$/, "");
+        var gh = document.getElementById("link-github");
+        var ghFooter = document.getElementById("footer-github");
+        var store = document.getElementById("link-store");
+        var release = document.getElementById("link-release");
+        var design = document.getElementById("link-design");
+        var spec = document.getElementById("link-spec");
+
+        function setRepoLinks() {
+          if (!repo || repo.indexOf("YOUR_USERNAME") !== -1) {
+            gh.href = "#configure-repo";
+            ghFooter.href = "#configure-repo";
+            gh.title = "Set githubRepo in landing/config.js";
+            ghFooter.title = gh.title;
+            design.href = "#configure-repo";
+            spec.href = "#configure-repo";
+            design.title = gh.title;
+            spec.title = gh.title;
+            return;
+          }
+          gh.href = repo;
+          ghFooter.href = repo;
+          design.href = repo + "/blob/main/DESIGN.md";
+          spec.href = repo + "/blob/main/SPEC.md";
+        }
+
+        function optionalLink(el, url, disabledClass) {
+          if (url) {
+            el.href = url;
+            el.classList.remove("is-disabled");
+            el.removeAttribute("aria-disabled");
+          } else {
+            el.href = "#";
+            el.classList.add("is-disabled");
+            el.setAttribute("aria-disabled", "true");
+          }
+        }
+
+        setRepoLinks();
+        optionalLink(store, cfg.chromeWebStore);
+        optionalLink(release, cfg.latestReleaseZip);
+      })();
+    </script>
+  </body>
+</html>

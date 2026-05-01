@@ -1,68 +1,189 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  font-family: "Georgia", "Times New Roman", serif;
+  color: #f2ede2;
+  background:
+    radial-gradient(circle at top, rgba(255, 219, 142, 0.12), transparent 30%),
+    linear-gradient(180deg, #0d0d0b 0%, #161613 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  min-width: 300px;
-  min-height: 200px;
-  padding: 16px;
-
+  min-width: 320px;
+  width: 360px;
+  min-height: 100vh;
+  background: transparent;
 }
 
-h1 {
-  font-size: 1.5em;
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.popupShell {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 100vh;
+  padding: 18px;
+  display: grid;
+  gap: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 38%),
+    radial-gradient(circle at top left, rgba(216, 170, 75, 0.15), transparent 34%),
+    linear-gradient(180deg, #10100e 0%, #171714 100%);
+  color: #f2ede2;
+}
+
+.popupShell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 100%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 100%);
+  background-size: 18px 18px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 72%);
+}
+
+.popupHero,
+.popupStatusCard,
+.popupNote,
+.popupButton,
+.popupFooter {
+  position: relative;
+  z-index: 1;
+}
+
+.popupHero {
+  display: grid;
+  gap: 10px;
+}
+
+.popupEyebrow,
+.popupStatusLabel,
+.popupNote span,
+.popupFooter {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 226, 0.64);
+}
+
+.popupTitle {
   margin: 0;
+  font-size: 1.55rem;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #fff8ec;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.popupLead {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(242, 237, 226, 0.82);
+}
+
+.popupLead code {
+  padding: 0.1rem 0.32rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff8ec;
+}
+
+.popupStatusGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.popupStatusCard,
+.popupNote {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.popupStatusCard {
+  padding: 12px;
+}
+
+.popupStatusValue {
+  margin-top: 6px;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.85rem;
+  color: #fff8ec;
+}
+
+.popupActions {
+  display: grid;
+  gap: 10px;
+}
+
+.popupButton {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 2px;
+  padding: 12px 14px;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.popupButton:active {
+  transform: translateY(1px);
+}
+
+.popupButtonPrimary {
+  background: linear-gradient(135deg, #c7a24a 0%, #8d6c1f 100%);
+  color: #161613;
+  font-weight: 700;
+}
+
+.popupButtonPrimary:hover {
+  border-color: rgba(255, 230, 180, 0.32);
+}
+
+.popupButtonSecondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: #f2ede2;
+}
+
+.popupButtonSecondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.popupNotes {
+  display: grid;
+  gap: 10px;
+}
+
+.popupNote {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+}
+
+.popupNote p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: rgba(242, 237, 226, 0.78);
+}
+
+.popupFooter {
+  margin: 0;
 }

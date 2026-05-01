@@ -118,14 +118,24 @@
         z-index: 6;
         contain: paint;
       }
+      .librarianHighlightVisuals {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+      }
       .librarianHighlightRect {
         position: absolute;
-        background: rgba(255, 230, 0, 0.26);
         border-radius: 4px;
         box-shadow:
-          0 0.55em 0 rgba(255, 230, 0, 0.14) inset,
-          0 0 0 0.5px rgba(255, 230, 0, 0.12);
-        transform: translateY(-0.25px);
+          inset 0 0.4em 0 rgba(255, 255, 255, 0.18),
+          0 0 0 0.5px rgba(0, 0, 0, 0.06);
+      }
+      .librarianHighlightHitLayer {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
       }
       #message {
         position: fixed;
@@ -146,6 +156,65 @@
       #message[hidden] {
         display: none;
       }
+
+      /* Design refresh */
+      :root {
+        font-family: "Georgia", "Times New Roman", serif;
+        color: #f4efe7;
+        background: #0d0d0b;
+        --sidebar-width: 24rem;
+      }
+      #chrome {
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 55%),
+          linear-gradient(180deg, #11110f, #171714);
+        color: #f4efe7;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: none;
+      }
+      #title,
+      #sidebarToggle {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      #status {
+        color: rgba(244, 239, 231, 0.7);
+      }
+      #url {
+        color: rgba(244, 239, 231, 0.55);
+      }
+      #sidebarToggle {
+        border-radius: 2px;
+        border-color: rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.03);
+      }
+      #sidebarToggle:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      #viewerContainer {
+        background:
+          radial-gradient(circle at top, rgba(255, 214, 128, 0.08), transparent 28%),
+          linear-gradient(180deg, #171714 0%, #11110f 100%);
+      }
+      #sidebar {
+        background:
+          linear-gradient(180deg, rgba(16, 16, 14, 0.98), rgba(22, 22, 19, 0.98)),
+          linear-gradient(180deg, #121210, #0f0f0d);
+        border-left: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: none;
+      }
+      .librarianHighlightRect {
+        border-radius: 2px;
+        box-shadow:
+          inset 0 0.35em 0 rgba(255, 255, 255, 0.14),
+          0 0 0 1px rgba(0, 0, 0, 0.08);
+      }
+      #message {
+        border-radius: 2px;
+        background: rgba(18, 18, 16, 0.96);
+        box-shadow: none;
+      }
     </style>
   </head>
   <body>
@@ -165,6 +234,7 @@
     <aside id="sidebar" aria-label="Librarian AI sidebar"></aside>
     <aside id="message" hidden></aside>
     <script type="module" src="./viewer.mjs"></script>
+    <script type="module" src="./ai.mjs"></script>
     <script type="module" src="./sidebar.mjs"></script>
   </body>
 </html>

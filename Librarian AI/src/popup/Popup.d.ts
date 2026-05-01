@@ -1,2 +1,3 @@
-declare const Popup: React.FC;
+import type { FC } from "react";
+declare const Popup: FC;
 export default Popup;

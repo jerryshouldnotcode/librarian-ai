@@ -361,40 +361,40 @@ OpenAI. The `LLMProvider` interface is designed to support additional providers 
 ### Phase 1 — MVP (Highlighting + Persistence)
 
 - **Extension plumbing**
-  - [ ] Extension scaffold (Manifest v3)
-  - [ ] PDF redirect via `declarativeNetRequest`
+  - [ ] ~~Extension scaffold (Manifest v3)~~
+  - [ ] ~~PDF redirect via `declarativeNetRequest`~~
 - **Viewer foundation**
-  - [ ] PDF.js viewer page (`viewer.html`) loads the target PDF
-  - [ ] Page render lifecycle events wired (`pagerendered`, `textlayerrendered`) for gating
+  - [ ] ~~PDF.js viewer page (`viewer.html`) loads the target PDF~~
+  - [ ] ~~Page render lifecycle events wired (`pagerendered`, `textlayerrendered`) for gating~~
 - **Highlighting core**
-  - [ ] Text selection detection in PDF.js text layer
-  - [ ] Convert selection → PDF-space anchor box(es)
-  - [ ] Coordinate-based highlight overlay rendering
-  - [ ] Overlay redraw on zoom/resize
+  - [ ] ~~Text selection detection in PDF.js text layer~~
+  - [ ] ~~Convert selection → PDF-space anchor box(es)~~
+  - [ ] ~~Coordinate-based highlight overlay rendering~~
+  - [ ] ~~Overlay redraw on zoom/resize~~
 - **Persistence**
   - [ ] Canonical document id derivation (`Document.id` as described in §4/§5.5)
   - [ ] Local storage read/write for `Document` (highlights + annotations)
-  - [ ] Reload-safe rehydration: render stored highlights after text layer is ready
+  - [ ] ~~Reload-safe rehydration: render stored highlights after text layer is ready~~
 - **Acceptance checks (Phase 1 “done”)**
-  - [ ] Open a PDF link → redirected to viewer
-  - [ ] User can select text and highlight it
-  - [ ] Highlight survives reload and zoom/resize
+  - [ ] ~~Open a PDF link → redirected to viewer~~
+  - [ ] ~~User can select text and highlight it~~
+  - [ ] ~~Highlight survives reload and zoom/resize~~
 
 ### Phase 2 — AI Chat + Sidebar UX
 
 - **Sidebar UI**
-  - [ ] Sidebar shell + toggle (toolbar icon + keyboard shortcut)
-  - [ ] Sidebar module isolated from viewer rendering logic
-  - [ ] Docked desktop layout with responsive collapsed/overlay behavior
-  - [ ] Tabs: chat, highlights, notes
-  - [ ] Panels: highlights list + notes panel
-  - [ ] Annotation editing UI
-  - [ ] Jump-to-source behavior for highlights and annotations
-  - [ ] Viewer ↔ sidebar custom event contracts wired
+  - [ ] ~~Sidebar shell + toggle (toolbar icon + keyboard shortcut)~~
+  - [ ] ~~Sidebar module isolated from viewer rendering logic~~
+  - [ ] ~~Docked desktop layout with responsive collapsed/overlay behavior~~
+  - [ ] ~~Tabs: chat, highlights, notes~~
+  - [ ] ~~Panels: highlights list + notes panel~~
+  - [ ] ~~Annotation editing UI~~
+  - [ ] ~~Jump-to-source behavior for highlights and annotations~~
+  - [ ] ~~Viewer ↔ sidebar custom event contracts wired~~
 - **Chat**
   - [ ] Viewer page ↔ background messaging for chat
   - [ ] OpenAI integration via `LLMProvider`
-  - [ ] Chat UI with message history
+  - [ ] ~~Chat UI with message history~~
   - [ ] Chat persistence (single thread per document, using `Document.chat`)
 - **Acceptance checks (Phase 2 “done”)**
   - [ ] Ask a question with selected text context
@@ -438,9 +438,9 @@ Potential additions when backend is introduced:
 
 ### Phase 1 (MVP) is complete when:
 
-1. User can select and highlight text in a PDF
+1. ~~User can select and highlight text in a PDF~~
 2. All highlights and notes persist after a page reload
-3. Highlights remain correctly rendered across zoom/resize
+3. ~~Highlights remain correctly rendered across zoom/resize~~
 
 ### Phase 2 is complete when:
 
