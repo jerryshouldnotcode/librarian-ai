@@ -4,7 +4,7 @@
  */
 window.LIBRARIAN_LANDING = {
   /** Source code and issues */
-  githubRepo: "https://github.com/YOUR_USERNAME/librarian-ai",
+  githubRepo: "https://github.com/jerryshouldnotcode/librarian-ai",
   /** Optional: Chrome Web Store listing when published */
   chromeWebStore: "",
   /** Optional: direct link to a packaged .zip release */
