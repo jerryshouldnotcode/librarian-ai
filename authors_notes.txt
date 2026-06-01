@@ -1,0 +1,5 @@
+03.19
+
+creating Librarian AI - an AI Google Extension for academic paper study
+
+I used Codex and Cursor to build Librarian, a Chrome extension for reading workflows on the web. I read a lot of research papers, and I was tired of having to hop back and forth between highlighting/taking notes on papers and using an AI tool to talk through the info I was learning. Librarian bridges the two workflows, and I restricted the LLM's results to the document's context only to avoid hallucinations. The outcome was an MVP I can use for arXiv papers and local PDFs to speed up my work, and a feature in Handshake's AI Coding Showcase (https://usf.joinhandshake.com/ai-showcase?project_id=3064210) alongside multiple other projects.
